@@ -27,13 +27,32 @@ function showTime(){
 
     // Gün bilgisi
     var currentDay = date.getDay();
-    let days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
-    currentDay = days[currentDay-1];
+   
+    // Kısa Yol - Array ile Çözüm
+    // let days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+    // currentDay = days[currentDay-1];
+
+    // If Statement ile Çözüm
+    if(currentDay == 1)
+        currentDay = "Pazartesi";
+    else if(currentDay == 2)
+        currentDay = "Salı";
+    else if(currentDay == 3)
+        currentDay = "Çarşamba";
+    else if(currentDay == 4)
+        currentDay = "Perşembe";
+    else if(currentDay == 5)
+        currentDay = "Cuma";
+    else if(currentDay == 6)
+        currentDay = "Cumartesi";
+    else if(currentDay == 7)
+        currentDay = "Pazar";
+    // Gün Bilgisi Bitti
     
     // Veriler sayfaya eklendi.
     document.querySelector("#myClock").innerHTML = h + ":" + min + ":" + sec + " " + currentDay;
 
-   setTimeout(showTime, 500);
+   setTimeout(showTime, 1000);
 }
 
 showTime();
