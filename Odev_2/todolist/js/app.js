@@ -5,22 +5,11 @@ var ul = document.querySelector("#list");
 var listArray = [];
 
 
-// Local Storaga daha önce tanımlandıysa oradaki listArray'in güncel halini getirme
 if (localStorage.getItem("listArray")) {
-  // Sayfadaya index.html dosyasından gelen default liste elemanlarını silme.
-  // Bu elemanlar eğer silinmediler ise Else bloğundaki Local Storage'dan getirilen array geri getirilerek listelenmekte
-  while (ul.firstChild) ul.removeChild(ul.firstChild);
+  // Bu blok yani If bloğu Local Storaga içerisinde listArray daha önce tanımlandıysa oradaki listArray'i getirir ve ekrana yazdırır.
 
-  // Local Storage içindeki güncel listeyi  storedArray  isimli değişkene atama
-  storedArray = JSON.parse(localStorage.getItem("listArray"));
-
-  // Sayfa refresh yapıldığında Else bloğundaki listArray içinde yer alan ancak kullanıcının sildiği list item'ın ekrana gelmemesi için
-  listArray = [];
-
-  // Sıfırlanan listArray'e Local Storage içinden getirilip storedArray ile tutulan elemanları atama
-  for (var i = 0; i < storedArray.length; i++) {
-    listArray[i] = storedArray[i];
-  }
+  // Local Storage içindeki güncel listeyi  listArray  içerisine alma
+  listArray = JSON.parse(localStorage.getItem("listArray"));
 
   // Listenin ekrana yazdırılması
   for (var i = 0; i < listArray.length; i++) {
@@ -30,19 +19,12 @@ if (localStorage.getItem("listArray")) {
   }
 }
 else {
-  // Bu yani Else kod bloğu Local Storaga içinde listArray isimli key tanımlı değil ise çalışır ve Local Storage temizlenmediği sürece bir daha çalışmaz.
+  // Bu blok yani Else bloğu Local Storaga içinde listArray isimli key tanımlı değil ise çalışır ve Local Storage temizlenmediği sürece bir daha çalışmaz.
 
-  // index.HTML dosyasında listeye Default olarak eklenen elemanları DOM ile bir değişkene atama. Gelen liste data type'ı object olan bir NodeLİst
-  // Node list uzunluk değeri değişkene atandı.
-  var defaultHtmlItems = document.querySelectorAll("#list li");
-  var defaultItemNumber = defaultHtmlItems.length;
+  // Sayfada default olarak gösterilmesi istenen liste elemanlarını  listArray  içerisine alma
+  listArray = ["3 Litre Su İç", "Ödevleri Yap", "En Az 3 Saat Kodlama Yap", "Yemek Yap", "50 Sayfa Kitap Oku"];
 
-  // Local Storaga tanımlı değil ise, NodeLlist olarak gelen liste elemanlarını saklanacakları  listArray  içerisine ekleme
-  Array.from(defaultHtmlItems).forEach(function (e) {
-    listArray.push(e.innerHTML);
-  });
-
-  // Listeyi ekrana yazdırma
+  // Default olarak gelecek listeyi ekrana yazdırma
   for (var i = 0; i < listArray.length; i++) {
     let liNew = document.createElement("li");
     liNew.innerHTML = listArray[i]
@@ -51,29 +33,10 @@ else {
 
   // List Array'i Local Storage'a gönderme
   localStorage.setItem("listArray", JSON.stringify(listArray));
-
-  // index.html içerisinde Statik olarak yer alan liste elemanlarının display özelliğinin none haline getirilmesi
-  // Böylece Statik liste elemanları sadece Local Storage henüz boş iken, sayfaya ilk girildiğinde listelenecektir.
-  // Sayfaya ilk girildiğinde bu Statik elemanlar doğrudan Local Storage içerisine gönderiliyor.
-  // Yani silinmedikleri takdirde Local Storage içinden gelecek olan Array içerisinden yine görüntülenebilirler.
-  var defaultHtmlItems = document.querySelectorAll("li");
-  for (var k = 0; k < defaultHtmlItems.length; k++) {
-    defaultHtmlItems[k].style.display = "none";
-  }
-
-  // Local Storage içerisine gönderilen listArrary geri getirilerek ekrana yazdırılacak
-  // Bunun sebebi Statik liste elemanları silindiği takdirde, tekrar html içerisinden gelemesin diye.
-  // Yani sadece Local Storage içerisindeki liste elemanları ekrana yansısın.
-  listArray = JSON.parse(localStorage.getItem("listArray"));
-  for (var i = 0; i < listArray.length; i++) {
-    let liNew = document.createElement("li");
-    liNew.innerHTML = listArray[i]
-    ul.appendChild(liNew);
-  }
 }
 
 
-// Sayfa açıldığında default olarak gelen liste elemanlarına silme işlemi için closeButton ekleme
+// Default liste elemanlarına silme işlemi için closeButton ekleme
 let liItems = document.querySelectorAll("#list li");
 
 for (let i = 0; i < liItems.length; i++) {
@@ -84,6 +47,15 @@ for (let i = 0; i < liItems.length; i++) {
 }
 
 
+// Default liste elemanlarına tamamlandı işlemi için checked isimli class'ı ekleme
+let liCompleted = document.querySelectorAll("li");
+for (let i = 0; i < liCompleted.length; i++) {
+  liCompleted[i].onclick = function () {
+    this.classList.toggle("checked");
+  };
+};
+
+
 // Listeden bir maddenin silinmesi ve silinen maddenin Local Storage'dan da kaldırılması
 var allContents = document.querySelectorAll(".close");
 for (var i = 0; i < allContents.length; i++) {
@@ -92,7 +64,7 @@ for (var i = 0; i < allContents.length; i++) {
 
     var removedContent = this.parentElement.textContent;
 
-    // İçeriğin sonunda gelen  X  'i silme
+    // İçeriğin sonunda gelen  x  karakterini silme
     removedContent = removedContent.slice(0, -1)
 
     var removedItemIndex = listArray.indexOf(removedContent);
@@ -106,16 +78,7 @@ for (var i = 0; i < allContents.length; i++) {
 }
 
 
-// Listede Tamamlanan bir maddenin işaretlenmesi
-let liCompleted = document.querySelectorAll("li");
-for (let i = 0; i < liCompleted.length; i++) {
-  liCompleted[i].onclick = function () {
-    this.classList.toggle("checked");
-  };
-};
-
-
-// Toast Mesajlarının  X  simgesi tıklanarak kapatılması
+// Toast Mesajlarının   x   simgesi tıklanarak kapatılması
 let closeToast = document.querySelectorAll(".closeToast");
 for (var i = 0; i < closeToast.length; i++) {
   closeToast[i].addEventListener("click", function () {
@@ -130,7 +93,7 @@ for (var i = 0; i < closeToast.length; i++) {
 };
 
 
-// Listeye yeni item ekleme fonksiyonu
+// Listeye yeni Liste Elemanı ekleme fonksiyonu
 function addNewItem() {
   // Yeni list item içeriğini bir değişkene atama 
   let liContent = document.querySelector("#task").value;
@@ -158,7 +121,7 @@ function addNewItem() {
     // Yeni item eklendikten sonra array'i local storage içine yazma
     localStorage.setItem("listArray", JSON.stringify(listArray));
 
-    // Yeni eklenen liste elemanının tamamlandı olarak işaretlenmesi için
+    // Yeni eklenen liste elemanının tamamlandı olarak işaretlenmesi
     liNew.onclick = function () {
       this.classList.toggle("checked");
     };
